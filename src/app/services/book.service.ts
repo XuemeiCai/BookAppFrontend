@@ -22,7 +22,7 @@ export class BookService {
   }
 
   updateBook(id: number, book: Book): Observable<Book> {
-    return this.http.put<Book>(`${this.baseUrl}/api/books`, book);
+    return this.http.put<Book>(`${this.baseUrl}/api/books/${id}`, book);
   }
 
   deleteBook(id: number): Observable<void> {
