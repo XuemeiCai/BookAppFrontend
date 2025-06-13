@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -17,13 +18,15 @@ export class LoginComponent {
   password = '';
   loginError = false;
 
+  private baseUrl = environment.apiBaseUrl;
+
   constructor(
     private router: Router,
     private http: HttpClient
   ) {}
 
   login() {
-    this.http.post('https://localhost:5001/api/auth/login', {
+    this.http.post(`${this.baseUrl}/api/auth/login`, {
       username: this.username,
       password: this.password
     }).subscribe({
