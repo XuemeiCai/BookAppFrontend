@@ -1,0 +1,32 @@
+.quotes-container {
+    width: 100%;
+    margin: auto;
+    padding: 1rem;
+  }
+  
+  .quote {
+    border-left: 4px solid #333;
+    padding: 1rem 1rem 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    background-color: #f9f9f9;
+    font-family: 'Georgia', serif;
+    transition: background-color 0.3s ease;
+  
+    &:hover {
+      background-color: #f0f0f0;
+    }
+  }
+  
+  .quote-text {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  
+  .quote-author {
+    font-size: 0.9rem;
+    text-align: right;
+    margin-top: 0.5rem;
+    color: #555;
+  }
+  
