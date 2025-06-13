@@ -11,8 +11,6 @@
 .DS_Store
 Thumbs.db
 
-# Environment files
-/src/environments/environment*.ts
 
 # Logs
 npm-debug.log*
