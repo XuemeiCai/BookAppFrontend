@@ -4,7 +4,9 @@ import { Quote } from '../types/Quote';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ 
+  providedIn: 'root' 
+})
 export class QuoteService {
   private baseUrl = environment.apiBaseUrl;
 

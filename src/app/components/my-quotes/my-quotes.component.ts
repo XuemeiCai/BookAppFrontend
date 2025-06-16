@@ -32,7 +32,7 @@ export class MyQuotesComponent implements OnInit {
   }
 
   addQuote() {
-    if (this.newQuote.text && this.newQuote.author) {
+    if (this.newQuote.text) {
       this.quoteService.addQuote(this.newQuote).subscribe({
         next: (quote) => {
           this.quotes.push(quote);

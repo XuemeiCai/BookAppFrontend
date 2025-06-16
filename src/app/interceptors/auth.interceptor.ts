@@ -1,62 +1,53 @@
-import { Injectable } from '@angular/core';
-import {
-  HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse, HttpClient
-} from '@angular/common/http';
-import { Observable, throwError, switchMap, catchError, map } from 'rxjs';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { AuthService } from '../services/auth.service';
+import { catchError, switchMap, throwError } from 'rxjs';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const authService = inject(AuthService);
+  const token = localStorage.getItem('token');
 
-  constructor(private http: HttpClient) {}
-
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = localStorage.getItem('token');
-
-    let authReq = req;
-    if (token) {
-      authReq = req.clone({
-        headers: req.headers.set('Authorization', `Bearer ${token}`)
-      });
-    }
-
-    return next.handle(authReq).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 && localStorage.getItem('refreshToken')) {
-          return this.refreshToken().pipe(
-            switchMap((newToken: string) => {
-              localStorage.setItem('token', newToken);
-              const retryReq = req.clone({
-                headers: req.headers.set('Authorization', `Bearer ${newToken}`)
-              });
-              return next.handle(retryReq);
-            }),
-            catchError(err => {
-              this.logout(); 
-              return throwError(() => err);
-            })
-          );
-        }
-        return throwError(() => error);
-      })
-    );
+  // Clone request with auth header if token exists
+  let authReq = req;
+  if (token) {
+    authReq = req.clone({
+      headers: req.headers.set('Authorization', `Bearer ${token}`)
+    });
   }
 
-  private refreshToken(): Observable<any> {
-    return this.http.post<{ token: string }>('/api/auth/refresh', {
-      refreshToken: localStorage.getItem('refreshToken')
-    }).pipe(
-      switchMap(response => {
-        return new Observable(observer => {
-          observer.next(response.token);
-          observer.complete();
-        });
-      })
-    );
-  }
+  return next(authReq).pipe(
+    catchError((error: HttpErrorResponse) => {
+      const isRefreshRequest = req.url.includes('/refresh');
+      
+      // Don't attempt refresh if this is already a refresh request
+      if (isRefreshRequest) {
+        return throwError(() => new Error('Refresh token failed'));
+      }
 
-  private logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    
-  }
-}
+      // Attempt token refresh on 401 errors
+      if (error.status === 401 && localStorage.getItem('refreshToken')) {
+        return authService.refreshToken().pipe(
+          switchMap((newToken: { token: string, refreshToken: string }) => {
+            // Store new tokens
+            localStorage.setItem('token', newToken.token);
+            localStorage.setItem('refreshToken', newToken.refreshToken);
+            
+            // Retry original request with new token
+            const retryReq = req.clone({
+              headers: req.headers.set('Authorization', `Bearer ${newToken.token}`)
+            });
+            return next(retryReq);
+          }),
+          catchError(err => {
+            // If refresh fails, logout and throw error
+            authService.logout();
+            return throwError(() => err);
+          })
+        );
+      }
+
+      // For all other errors
+      return throwError(() => error);
+    })
+  );
+};

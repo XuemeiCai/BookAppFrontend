@@ -1,21 +1,23 @@
-<div class="book-item card h-100 p-3 mb-3">
-    <img 
-        [src]="book.imagePath || 'images/books-images/book_default.png'" 
-        class="card-img-top book-cover-img" 
-        alt="{{ book.title }} cover" 
-        *ngIf="!book.isEditing"
-    >
-  
-    <!-- Book Info -->
-    <div *ngIf="!book.isEditing">
-      <h5 class="card-title">{{ book.title }}</h5>
-      <p>{{ book.author }}</p>
-      <div class="d-flex justify-content-between">
-        <button type="button" class="btn btn-dark" (click)="triggerEdit()">Edit</button>
-        <button type="button" class="btn btn-dark" (click)="delete()">Delete</button>
-      </div>
-    </div>
+<div class="book-item card h-100 p-3 mb-3 d-flex flex-column">
+  <img 
+    [src]="book.imagePath || 'images/books-images/book_default.png'" 
+    (error)="onImageError($event)" 
+    class="card-img-top book-cover-img" 
+    alt="{{ book.title }} cover" 
+    *ngIf="!book.isEditing"
+  >
+
+  <div class="flex-grow-1 d-flex flex-column mt-3" *ngIf="!book.isEditing">
+    <h5 class="card-title">{{ book.title }}</h5>
+    <p>{{ book.author }}</p>
   </div>
+
+  <div class="mt-auto d-flex justify-content-between" *ngIf="!book.isEditing">
+    <button type="button" class="btn btn-dark" (click)="triggerEdit()">Edit</button>
+    <button type="button" class="btn btn-dark" (click)="delete()">Delete</button>
+  </div>
+</div>
+
   
     
     

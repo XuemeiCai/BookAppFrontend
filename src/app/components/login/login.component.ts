@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { AuthService } from '../../services/auth.service';
+
+
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ CommonModule, FormsModule, HttpClientModule],
+  imports: [ CommonModule, FormsModule],
+
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -18,34 +19,24 @@ export class LoginComponent {
   password = '';
   loginError = false;
 
-  private baseUrl = environment.apiBaseUrl;
-
   constructor(
     private router: Router,
-    private http: HttpClient
+    private authService: AuthService
   ) {}
 
   login() {
-    this.http.post(`${this.baseUrl}/api/auth/login`, {
-      username: this.username,
-      password: this.password
-    }).subscribe({
+    this.authService.login(this.username, this.password).subscribe({
       next: (res: any) => {
-        if(res.success) {
-          localStorage.setItem('token',res.token);
-          localStorage.setItem('refreshToken', res.refreshToken);
-          localStorage.setItem('username',res.username);
+        if (res.success) {
+          this.authService.saveSession(res.token, res.refreshToken, res.username);
           this.router.navigate(['/']);
         }
-        
       },
       error: () => {
         this.loginError = true;
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('username');
+        this.authService.clearSession();
       }
-    })
-  } 
+    });
+  }
 
 }

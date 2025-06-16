@@ -18,14 +18,17 @@ export class BookItemComponent {
   @Output() deleteBook = new EventEmitter<void>();
   @Output() editRequest = new EventEmitter<void>();
 
-  
-
   triggerEdit() {
     this.editRequest.emit();
   }
 
   delete() {
     this.deleteBook.emit(); 
+  }
+
+  onImageError(event: Event) {
+    const target = event.target as HTMLImageElement;
+    target.src = 'images/books-images/book_default.png';
   }
 
 

@@ -2,6 +2,7 @@ import { Component, OnInit  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -14,7 +15,7 @@ export class NavbarComponent implements OnInit {
   userName: string | null = null;
   isDarkMode = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
     const savedTheme = localStorage.getItem('theme');
@@ -34,10 +35,8 @@ export class NavbarComponent implements OnInit {
 
   logout(): void {
     if (typeof window !== 'undefined' && localStorage) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('username');
+      this.authService.logout();
     }
-    this.router.navigate(['/login']);
+    
   }
 }

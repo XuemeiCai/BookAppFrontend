@@ -1,7 +1,34 @@
 <div class="container-fluid quotes-container">
-    <div class="quote" *ngFor="let quote of quotes">
-      <p class="quote-text">“{{ quote.text }}”</p>
-      <p class="quote-author">— {{ quote.author }}</p>
+  <form (ngSubmit)="addQuote()" #quoteForm="ngForm" class="mb-4">
+    <div class="mb-2">
+      <input 
+        type="text" 
+        class="form-control" 
+        placeholder="Quote text"
+        required 
+        [(ngModel)]="newQuote.text" 
+        name="text" />
     </div>
+    <div class="mb-2">
+      <input 
+        type="text" 
+        class="form-control" 
+        placeholder="Author"
+        [(ngModel)]="newQuote.author" 
+        name="author" />
+    </div>
+    <button 
+      type="submit" 
+      class="btn btn-primary w-100 w-lg-auto" 
+      [disabled]="quoteForm.invalid">
+      <i class="fa-solid fa-plus mee-2"></i>
+      Add Quote
+    </button>
+  </form>
+
+  <div class="quote" *ngFor="let quote of quotes">
+    <p class="quote-text">“{{ quote.text }}”</p>
+    <p class="quote-author" *ngIf="quote.author"> — {{ quote.author }}</p>
   </div>
+</div>
   
