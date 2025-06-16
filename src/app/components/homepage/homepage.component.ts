@@ -51,7 +51,8 @@ export class HomepageComponent implements OnInit {
         next: (createdBook) => {
           this.books.push(createdBook);
           this.newBook = { title: '', author: '', isbn: '', imagePath: '' };
-
+          this.searchTerm = '';
+          this.loadBooks();
           const modalEl = document.getElementById('newBookModal');
           const modal = bootstrap.Modal.getInstance(modalEl!);
           modal?.hide();
