@@ -34,7 +34,7 @@ export class AuthService {
 
   refreshToken(): Observable<any> {
       return this.http.post<{ token: string,refreshToken:string }>(
-        '/api/auth/refresh',
+        `${this.baseUrl}/api/auth/refresh`,
         { refreshToken: localStorage.getItem('refreshToken') }
       ).pipe(
         map(response => {
