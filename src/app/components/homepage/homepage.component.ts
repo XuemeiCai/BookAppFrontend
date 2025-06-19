@@ -41,7 +41,6 @@ export class HomepageComponent implements OnInit {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
         this.searchTerm='';
-        this.loadBooks();
       });
     this.loadBooks();
   }

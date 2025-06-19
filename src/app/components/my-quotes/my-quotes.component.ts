@@ -36,8 +36,7 @@ export class MyQuotesComponent implements OnInit {
           this.resetForm();
         }
       });
-    
-      this.loadQuotes();
+    this.loadQuotes();
   }
 
   resetForm() {
