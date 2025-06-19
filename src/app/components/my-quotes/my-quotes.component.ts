@@ -1,12 +1,12 @@
 declare var bootstrap: any; 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { QuoteService } from '../../services/quote.service';
 import { Quote } from '../../types/Quote';
 import { QuoteItemComponent } from '../quote-item/quote-item.component';
 import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { filter, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-my-quotes',
@@ -15,7 +15,7 @@ import { filter } from 'rxjs/operators';
   templateUrl: './my-quotes.component.html',
   styleUrl: './my-quotes.component.scss'
 })
-export class MyQuotesComponent implements OnInit {
+export class MyQuotesComponent implements OnInit, OnDestroy {
   quotes: Quote[] = [];
   newQuote: Quote = {
     text: '',
@@ -24,18 +24,25 @@ export class MyQuotesComponent implements OnInit {
 
   editQuoteIndex: number | null = null;
   editedQuote: Quote = { text: '', author: ''};
+  private navSub!: Subscription;
 
   constructor(private quoteService: QuoteService, private router: Router) {}
+  
 
-  ngOnInit(): void {      
-    this.router.events
+  ngOnInit(): void {
+    this.navSub = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
-        if (this.router.url.includes('/my-quotes')) {
-          this.resetForm();
+        if (this.router.url === '/my-quotes') {
+          this.resetForm(); 
         }
       });
+
     this.loadQuotes();
+  }
+
+  ngOnDestroy(): void {
+    this.navSub.unsubscribe(); 
   }
 
   resetForm() {

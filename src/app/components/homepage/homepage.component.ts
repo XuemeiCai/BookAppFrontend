@@ -1,12 +1,12 @@
 declare var bootstrap: any; 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BookItemComponent } from '../book-item/book-item.component';
 import { Book } from '../../types/Book';
 import { FormsModule } from '@angular/forms';
 import { BookService } from '../../services/book.service';
 import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { filter, Subscription } from 'rxjs';
 
 
 @Component({
@@ -20,7 +20,7 @@ import { filter } from 'rxjs/operators';
   templateUrl: './homepage.component.html',
   styleUrl: './homepage.component.scss'
 })
-export class HomepageComponent implements OnInit {
+export class HomepageComponent implements OnInit, OnDestroy {
 
   searchTerm = '';
   books: Book[] = [];
@@ -33,17 +33,23 @@ export class HomepageComponent implements OnInit {
 
   editBookIndex: number | null = null;
   editedBook: Book = { title: '', author: '', isbn: '', imagePath:'' };
+  private navSub!: Subscription;
 
   constructor(private bookService: BookService, private router: Router) {}
-
+  
   ngOnInit(): void {
-    this.router.events
+
+    this.navSub = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
         this.searchTerm='';
         this.loadBooks();
       });
-      this.loadBooks();
+    this.loadBooks();
+  }
+
+  ngOnDestroy(): void {
+    this.navSub.unsubscribe(); 
   }
 
   loadBooks() {
