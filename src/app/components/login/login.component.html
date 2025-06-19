@@ -1,48 +1,57 @@
-<div class="container-fluid d-flex flex-column align-items-center justify-content-center min-vh-100" style="max-width: 400px;">
-  <div class="card shadow-sm p-4" style="width: 100%; max-width: 400px;">
-    <h4 class="mb-4 text-center">Log in to BookApp</h4>
+<div class="container-fluid d-flex flex-column align-items-center justify-content-center min-vh-100">
+  <div class="card shadow-sm p-4 w-100" style="max-width: 400px;">
+    <h4 class="mb-4 text-center">{{ isRegisterMode ? 'Create an Account' : 'Log in to BookApp' }}</h4>
+
+    <!-- Loader -->
+    <div *ngIf="isLoading" class="d-flex justify-content-center my-3">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <!-- Login Form -->
     <form *ngIf="!isRegisterMode" #loginForm="ngForm" (ngSubmit)="login()">
-        <div class="mb-3">
-          <label for="username" class="form-label">Username</label>
-          <input 
-            type="text" 
-            id="username" 
-            class="form-control mb-2" 
-            [(ngModel)]="username" 
-            name="username" 
-            required 
-            placeholder="Enter your username"
-            />
-        </div>
-        <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
-          <input 
-            type="password" 
-            id="password" 
-            class="form-control mb-2" 
-            [(ngModel)]="password" 
-            name="password" 
-            required 
-            placeholder="Enter your password"
-            />
-        </div>
-        <button type="submit" class="btn btn-primary w-100" [disabled]="!loginForm.valid">Log in</button>
-        <div *ngIf="loginError" class="text-danger mt-2">Invalid credentials. Please try again.</div>
-      </form>
-    
-    <!-- Registration form -->
-    <form #registrationForm="ngForm" *ngIf="isRegisterMode" (ngSubmit)="register()">
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          class="form-control" 
+          [(ngModel)]="username" 
+          name="username" 
+          required 
+          placeholder="Enter your username"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          class="form-control" 
+          [(ngModel)]="password" 
+          name="password" 
+          required 
+          placeholder="Enter your password"
+          autocomplete="off"
+        />
+      </div>
+      <button type="submit" class="btn btn-primary w-100" [disabled]="!loginForm.valid || isLoading">Log in</button>
+      <div *ngIf="loginError" class="text-danger mt-2">Invalid credentials. Please try again.</div>
+    </form>
+
+    <!-- Registration Form -->
+    <form *ngIf="isRegisterMode" #registrationForm="ngForm" (ngSubmit)="register()">
       <div class="mb-3">
         <label for="registerUsername" class="form-label">Username</label>
         <input 
-          type="text"   
-          id="registerUsername" 
-          class="form-control" 
+          type="text"
+          id="registerUsername"
+          class="form-control"
           [(ngModel)]="registerUsername"
           (ngModelChange)="checkUsernameAvailability()" 
-          name="registerUsername" 
-          required 
-          minlength="3"
+          name="registerUsername"
+          required minlength="3"
           pattern="^[a-zA-Z0-9]+$"
           #registerUsernameRef="ngModel"
         />
@@ -51,10 +60,9 @@
           <div *ngIf="registerUsernameRef.errors?.['minlength']">At least 3 characters required.</div>
           <div *ngIf="registerUsernameRef.errors?.['pattern']">Only letters and numbers allowed.</div>
         </div>
-        <div *ngIf="usernameTaken" class="text-danger small">
-          This username is already taken.
-        </div>
+        <div *ngIf="usernameTaken" class="text-danger small">This username is already taken.</div>
       </div>
+
       <div class="mb-3">
         <label for="registerPassword" class="form-label">Password</label>
         <input 
@@ -66,6 +74,7 @@
           required
           pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$" 
           #registerPasswordRef="ngModel"
+          autocomplete="off"
         />
         <div *ngIf="registerPasswordRef.invalid && registerPasswordRef.touched" class="text-danger small">
           <div *ngIf="registerPasswordRef.errors?.['required']">Password is required.</div>
@@ -75,40 +84,49 @@
         </div>
       </div>
 
-     <!-- Confirm Password Field -->
-    <div class="mb-3">
-      <label for="confirmPassword" class="form-label">Confirm Password</label>
-      <input 
-        type="password"
-        id="confirmPassword"
-        name="confirmPassword"
-        class="form-control"
-        [(ngModel)]="confirmPassword"
-        #confirmPasswordRef="ngModel"
-        required
-      />
-      <div *ngIf="confirmPasswordRef.touched && confirmPassword !== registerPassword" class="text-danger small">
-        Passwords do not match.
+      <div class="mb-3">
+        <label for="confirmPassword" class="form-label">Confirm Password</label>
+        <input 
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          class="form-control"
+          [(ngModel)]="confirmPassword"
+          #confirmPasswordRef="ngModel"
+          required
+          autocomplete="off"
+        />
+        <div *ngIf="confirmPasswordRef.touched && confirmPassword !== registerPassword" class="text-danger small">
+          Passwords do not match.
+        </div>
       </div>
-    </div>
 
       <button 
         type="submit" 
         class="btn btn-success w-100" 
-        [disabled]="!registrationForm.valid || confirmPassword !== registerPassword || usernameTaken">Create Account
+        [disabled]="
+          !registrationForm.valid || 
+          confirmPassword !== registerPassword || 
+          usernameTaken || 
+          isLoading
+        ">
+        Create Account
       </button>
+
       <div *ngIf="registerSuccess" class="text-success mt-2">Account created! You can now log in.</div>
       <div *ngIf="registerError" class="text-danger mt-2">Failed to create account. Try again.</div>
     </form>
 
+    <!-- Mode Toggle -->
     <div class="mt-3 text-center">
-      <small *ngIf="!isRegisterMode">Don't have an account? 
+      <small *ngIf="!isRegisterMode">
+        Don not have an account? 
         <button type="button" class="btn btn-link p-0" (click)="toggleMode()">Create one</button>
       </small>
-      <small *ngIf="isRegisterMode">Already have an account? 
-        <a href="#" (click)="toggleMode()">Log in</a>
+      <small *ngIf="isRegisterMode">
+        Already have an account? 
+        <button type="button" class="btn btn-link p-0" (click)="toggleMode()">Log in</button>
       </small>
     </div>
   </div>
-    
 </div>

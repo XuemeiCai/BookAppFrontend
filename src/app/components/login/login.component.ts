@@ -31,36 +31,44 @@ export class LoginComponent {
   registerError = false;
   isRegisterMode = false;
 
+  isLoading = false;
+
   constructor(
     private router: Router,
     private authService: AuthService
   ) {}
 
   login() {
+    this.isLoading = true;
     this.authService.login(this.username, this.password).subscribe({
       next: (res: any) => {
         if (res.success) {
           this.authService.saveSession(res.token, res.refreshToken, res.username);
           this.router.navigate(['/']);
+          this.isLoading = false;
         }
       },
       error: () => {
         this.loginError = true;
         this.authService.clearSession();
+        this.isLoading = false;
       }
     });
   }
 
   register() {
+    this.isLoading = true;
     this.authService.register(this.registerUsername, this.registerPassword).subscribe({
       next: () => {
         this.registerSuccess = true;
         this.registerError = false;
         this.registrationForm.resetForm();
+        this.isLoading = false; 
       },
       error: () => {
         this.registerError = true;
         this.registerSuccess = false;
+        this.isLoading = false; 
       }
     });
   }
