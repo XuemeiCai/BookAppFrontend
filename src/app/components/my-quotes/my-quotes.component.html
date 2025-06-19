@@ -26,9 +26,39 @@
     </button>
   </form>
 
-  <div class="quote" *ngFor="let quote of quotes">
-    <p class="quote-text">“{{ quote.text }}”</p>
-    <p class="quote-author" *ngIf="quote.author"> — {{ quote.author }}</p>
+  <div class="quote" *ngFor="let quote of quotes; let i = index">
+    <app-quote-item
+      [quote]="quote"
+      (deleteQuote)="removeQuote(i)"
+      (editRequest)="startEdit(i)">
+    </app-quote-item>
+  </div>
+
+  <!--  Edit Quote Modal -->
+  <div class="modal fade" id="editQuoteModal" tabindex="-1" aria-labelledby="editQuoteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" (ngSubmit)="saveEdit()" #editForm="ngForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editQuoteModalLabel">Edit Quote</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Quote Text</label>
+            <input type="text" class="form-control" [(ngModel)]="editedQuote.text" name="editText" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Author</label>
+            <input type="text" class="form-control" [(ngModel)]="editedQuote.author" name="editAuthor" required />
+          </div>
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid">Save</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
   

@@ -5,28 +5,36 @@
     z-index: 1000;
   }
 
-  .navbar {
-    background-color: #ffffff;
-    font-family: 'system-ui', sans-serif;
-    border-bottom: 1px solid #eee;
-  }
+  .custom-navbar {
+    background-color: var(--card-bg);
+    color: var(--text-color);
   
-  .navbar-brand {
-    font-size: 1.25rem;
-    color: #222;
-    text-decoration: none;
-  }
+    .navbar-brand,
+    .nav-link,
+    .dropdown-toggle,
+    .dropdown-item {
+      color: var(--text-color) !important;
+    }
+
+    .nav-link:hover {
+      font-weight: 600;
+    }
   
-  .nav-link {
-    font-weight: 500;
-    color: #444;
-  }
+    .dropdown-menu {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 0;
+      border-radius: var(--border-radius);
+    }
   
-  .dropdown-menu {
-    font-size: 0.95rem;
-  }
-  
-  .btn-outline-light {
-    border: 1px solid #ddd;
+    .dropdown-item:hover {
+      background-color: var(--btn-primary-bg);
+      color: var(--btn-primary-bg);
+      width: 100%;
+      margin: 0;
+      border: none;
+      border-radius: var(--border-radius);
+    }
+
   }
   

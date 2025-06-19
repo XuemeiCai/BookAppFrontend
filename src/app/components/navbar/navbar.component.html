@@ -12,10 +12,10 @@
          <!-- Left-aligned navigation links -->
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+            <a class="nav-link" (click)="goToHomepage()">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="/my-quotes" routerLinkActive="active">My Quotes</a>
+            <a class="nav-link" (click)="goToMyQuotes()">My Quotes</a>
           </li> 
         </ul>
         <!-- Right-aligned profile and mode switch-->

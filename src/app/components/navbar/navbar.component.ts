@@ -27,6 +27,18 @@ export class NavbarComponent implements OnInit {
     }
   }
 
+  goToHomepage() {
+    this.router.navigate(['/homepage'],{
+      queryParams: { refresh: new Date().getTime() } 
+    });
+  }
+
+  goToMyQuotes() {
+    this.router.navigate(['/my-quotes'], {
+      queryParams: { refresh: new Date().getTime() } 
+    });
+  }
+
   toggleTheme() {
     this.isDarkMode = !this.isDarkMode;
     document.documentElement.setAttribute('data-theme', this.isDarkMode ? 'dark' : 'light');
@@ -36,6 +48,7 @@ export class NavbarComponent implements OnInit {
   logout(): void {
     if (typeof window !== 'undefined' && localStorage) {
       this.authService.logout();
+      localStorage.removeItem('theme');
     }
     
   }

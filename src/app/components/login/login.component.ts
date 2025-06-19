@@ -3,7 +3,8 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
-
+import { ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
 
 @Component({
@@ -15,9 +16,20 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
+  @ViewChild('registrationForm') registrationForm!: NgForm;
+
   username = '';
   password = '';
   loginError = false;
+
+  registerUsername = '';
+  usernameTaken = false;
+  usernameCheckTimeout: any;
+  registerPassword = '';
+  confirmPassword = '';
+  registerSuccess = false;
+  registerError = false;
+  isRegisterMode = false;
 
   constructor(
     private router: Router,
@@ -37,6 +49,49 @@ export class LoginComponent {
         this.authService.clearSession();
       }
     });
+  }
+
+  register() {
+    this.authService.register(this.registerUsername, this.registerPassword).subscribe({
+      next: () => {
+        this.registerSuccess = true;
+        this.registerError = false;
+        this.registrationForm.resetForm();
+      },
+      error: () => {
+        this.registerError = true;
+        this.registerSuccess = false;
+      }
+    });
+  }
+
+  checkUsernameAvailability() {
+    clearTimeout(this.usernameCheckTimeout); 
+    this.usernameCheckTimeout = setTimeout(() => {
+      if (this.registerUsername.length >= 3) {
+        this.authService.isUsernameTaken(this.registerUsername).subscribe({
+          next: (exists: boolean) => {
+            this.usernameTaken = exists;
+          },
+          error: () => {
+            this.usernameTaken = false;
+          }
+        });
+      } else {
+        this.usernameTaken = false;
+      }
+    }, 500); 
+  }
+
+  toggleMode() {
+    this.isRegisterMode = !this.isRegisterMode;
+    this.loginError = false;
+    this.registerError = false;
+    this.registerSuccess = false;
+    this.username = '';
+    this.password = '';
+    this.registerUsername = '';
+    this.registerPassword = '';
   }
 
 }

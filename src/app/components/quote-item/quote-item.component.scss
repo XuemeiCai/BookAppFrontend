@@ -1,0 +1,25 @@
+.quote-item {
+    position: relative;
+    padding-bottom: 40px; 
+  }
+
+.quote-text {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+  
+  .quote-author {
+    font-size: 0.9rem;
+    text-align: right;
+    margin-top: 0.5rem;
+    color: var(--text-color);
+  }
+
+  .fa-trash, .fa-pen-to-square {
+    color: var(--icon-color);
+  }
+
+  .fa-trash:hover, .fa-pen-to-square:hover {
+    color: var(--btn-primary-bg);
+    cursor: pointer;
+  }

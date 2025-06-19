@@ -5,6 +5,8 @@ import { BookItemComponent } from '../book-item/book-item.component';
 import { Book } from '../../types/Book';
 import { FormsModule } from '@angular/forms';
 import { BookService } from '../../services/book.service';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 
 @Component({
@@ -32,9 +34,15 @@ export class HomepageComponent implements OnInit {
   editBookIndex: number | null = null;
   editedBook: Book = { title: '', author: '', isbn: '', imagePath:'' };
 
-  constructor(private bookService: BookService) {}
+  constructor(private bookService: BookService, private router: Router) {}
 
   ngOnInit(): void {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.searchTerm='';
+        this.loadBooks();
+      });
     this.loadBooks();
   }
 

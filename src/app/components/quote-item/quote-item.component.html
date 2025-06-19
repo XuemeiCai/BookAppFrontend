@@ -1,0 +1,9 @@
+<div class="container-fluid  quote-item">
+    <p class="quote-text">“{{ quote.text }}”</p>
+    <p class="quote-author" *ngIf="quote.author"> — {{ quote.author }}</p>
+    <div class="position-absolute bottom-0 end-0 p-2">
+      <i class="fa-solid fa-pen-to-square me-2" (click)="triggerEdit()"></i>
+      <i class="fa-solid fa-trash me-2" (click)="delete()"></i>
+    </div>
+
+</div>
