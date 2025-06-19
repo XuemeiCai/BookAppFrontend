@@ -27,8 +27,7 @@ export class MyQuotesComponent implements OnInit {
 
   constructor(private quoteService: QuoteService, private router: Router) {}
 
-  ngOnInit(): void {
-    this.resetForm();       
+  ngOnInit(): void {      
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
